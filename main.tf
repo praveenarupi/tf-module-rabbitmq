@@ -38,3 +38,16 @@ resource "aws_ec2_tag" "name-tag" {
   resource_id = "Name"
   value       = "rabbitmq-${var.env}"
 }
+
+resource "null_resource" "ansible-apply" {
+  provisioner "remote-exec" {
+    connection {
+      host = aws_spot_instance_request.rabbitmq.private_ip
+      user = local.ssh_username
+      password = local.ssh_password
+    }
+    inline = [
+      ansible-pull -i localhost, -U 
+    ]
+  }
+}
